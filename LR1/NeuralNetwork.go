@@ -13,7 +13,8 @@ type NeuralNetwork struct {
 	net       float64
 	weights   [5]float64
 	boolFunc  []int
-	errorsArr [][2]int
+	epochsArr []int
+	errorsArr []int
 }
 
 func NewNeuralNetwork(funcType int, nu float64, boolFunc []int) *NeuralNetwork {
@@ -99,7 +100,8 @@ func (n *NeuralNetwork) Study(variablesVector []int) {
 			n.WeightsCorrection(sigma, dfdnet, x)
 		}
 		weightsString := n.weightsToString()
-		n.errorsArr = append(n.errorsArr, [2]int{epoch, err})
+		n.errorsArr = append(n.errorsArr, err)
+		n.epochsArr = append(n.errorsArr, epoch)
 		fmt.Printf("%5d %18s %39s %5d\n", epoch, valuesVector, weightsString, err)
 
 		if err == 0 {

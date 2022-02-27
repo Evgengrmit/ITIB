@@ -69,7 +69,7 @@ func GetFastSet(n int) {
 		fmt.Println("cannot study on this small variables n:", n)
 		return
 	}
-	fmt.Println("fast set of size:", n, "epochs:", minEpoch, "variables:", minValues)
+	fmt.Println("fast set of size:", n, "epochs:", minEpoch+1, "variables:", minValues)
 
 }
 

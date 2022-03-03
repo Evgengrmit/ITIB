@@ -12,6 +12,7 @@ func main() {
 	{
 		nw := NewNeuralNetwork(1, 0.3, Function)
 		nw.Study(Set)
+		fmt.Println(nw.Weights, nw.Run())
 		Plot(nw.epochsArr, nw.errorsArr, "1.png")
 	}
 	fmt.Println("\n\n", strings.Repeat("-", 30), "FA 2nd type", strings.Repeat("-", 30))

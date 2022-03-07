@@ -3,7 +3,12 @@ package main
 import (
 	"errors"
 	"fmt"
+	"gonum.org/v1/plot"
+	"gonum.org/v1/plot/plotter"
+	"gonum.org/v1/plot/plotutil"
+	"gonum.org/v1/plot/vg"
 	"math"
+	"math/rand"
 	"strings"
 )
 
@@ -15,8 +20,7 @@ func getStringsFormat(m []float64) string {
 	return strings.Join(strF, ", ")
 }
 
-func NewNeuron(M int, a, b, eta float64) *Neuron {
-	windowSize := int(math.Abs(a) + math.Abs(b))
+func NewNeuron(M, window int, a, b, eta float64) *Neuron {
 	n := 20
 	epochs := make([]int, 0, M)
 	epsilons := make([]float64, 0, M)
@@ -26,7 +30,7 @@ func NewNeuron(M int, a, b, eta float64) *Neuron {
 		b:            b,
 		eta:          eta,
 		n:            n,
-		windowSize:   windowSize,
+		windowSize:   window,
 		epochs:       epochs,
 		epsilons:     epsilons,
 	}
@@ -116,7 +120,7 @@ func (n *Neuron) WorkingMode() {
 	vecFX := n.getX(n.a, n.b)
 	vectorT := n.getT(n.b, 2*n.b-n.a)
 	vectorX := n.getX(n.b, 2*n.b-n.a)
-	testFunction := make([]float64, 28)
+	testFunction := make([]float64, 20+n.windowSize)
 	tF := make([]float64, n.n)
 	for i := n.n - n.windowSize; i < n.n; i++ {
 		testFunction[i-(n.n-n.windowSize)] = n.learnFunction[i]
@@ -138,14 +142,76 @@ func (n *Neuron) WorkingMode() {
 	fmt.Println("tF:", getStringsFormat(tF))
 }
 
+func Plotting(data, errs []float64, name string) {
+	rand.Seed(int64(0))
+
+	p := plot.New()
+
+	p.Title.Text = "Graph"
+	p.X.Label.Text = name
+	p.Y.Label.Text = "errors"
+	pts := make(plotter.XYs, len(errs))
+	for i := range pts {
+		if i == 0 {
+			pts[i].X = data[i]
+		} else {
+			pts[i].X = pts[i-1].X + data[i-1]
+		}
+		pts[i].Y = errs[i]
+
+	}
+	err := plotutil.AddLinePoints(p, "Line", pts)
+	if err != nil {
+		panic(err)
+	}
+
+	if err := p.Save(4*vg.Inch, 4*vg.Inch, name+".png"); err != nil {
+		panic(err)
+	}
+}
+
+func CreateGraphs() {
+	{
+		etas := make([]float64, 0)
+		epsilons := make([]float64, 0)
+		for i := 0.01; i < 0.6; i += 0.005 {
+			etas = append(etas, i)
+			n := NewNeuron(465, 8, -5, 3, i)
+			epsilons = append(epsilons, n.Epsilon)
+		}
+		Plotting(etas, epsilons, "Eta")
+	}
+	{
+		windows := make([]float64, 0)
+		epsilons := make([]float64, 0)
+		for i := 1; i < 10; i++ {
+			windows = append(windows, float64(i))
+			n := NewNeuron(465, i, -5, 3, 0.115)
+			epsilons = append(epsilons, n.Epsilon)
+		}
+		Plotting(windows, epsilons, "Window")
+	}
+	{
+		epochs := make([]float64, 0)
+		epsilons := make([]float64, 0)
+		for i := 100; i < 1500; i += 50 {
+			epochs = append(epochs, float64(i))
+			n := NewNeuron(465, i, -5, 3, 0.115)
+			epsilons = append(epsilons, n.Epsilon)
+		}
+		Plotting(epochs, epsilons, "Epoch")
+	}
+}
+
 func main() {
-	obj := NewNeuron(10, -5, 3, 0.115)
-	obj.TrainingMode()
-	obj.WorkingMode()
-	fmt.Println(obj.Epsilon)
-	obj = NewNeuron(465, -5, 3, 0.115)
-	obj.TrainingMode()
-	obj.WorkingMode()
-	fmt.Println(obj.Epsilon)
-	fmt.Println(obj.Weights)
+	//obj := NewNeuron(10, 8, -5, 3, 0.115)
+	//obj.TrainingMode()
+	//obj.WorkingMode()
+	//fmt.Println(obj.Epsilon)
+	//obj = NewNeuron(465, 8, -5, 3, 0.115)
+	//obj.TrainingMode()
+	//obj.WorkingMode()
+	//fmt.Println(obj.Epsilon)
+	//fmt.Println(obj.Weights)
+	CreateGraphs()
 }

@@ -3,12 +3,12 @@ package main
 import (
 	"errors"
 	"fmt"
+	"github.com/fale/sit"
 	"gonum.org/v1/plot"
 	"gonum.org/v1/plot/plotter"
 	"gonum.org/v1/plot/plotutil"
 	"gonum.org/v1/plot/vg"
 	"math"
-	"math/rand"
 	"strings"
 )
 
@@ -143,7 +143,6 @@ func (n *Neuron) WorkingMode() {
 }
 
 func Plotting(data, errs []float64, name string) {
-	rand.Seed(int64(0))
 
 	p := plot.New()
 
@@ -164,6 +163,9 @@ func Plotting(data, errs []float64, name string) {
 	if err != nil {
 		panic(err)
 	}
+	p.Y.Tick.Marker = sit.Ticker{}
+	p.Y.Min = sit.Min(p.Y.Min, p.Y.Max)
+	p.Y.Max = sit.Max(p.Y.Min, p.Y.Max)
 
 	if err := p.Save(4*vg.Inch, 4*vg.Inch, name+".png"); err != nil {
 		panic(err)

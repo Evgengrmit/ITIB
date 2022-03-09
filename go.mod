@@ -4,6 +4,7 @@ go 1.17
 
 require (
 	github.com/ajstarks/svgo v0.0.0-20210923152817-c3b6e2f0c527 // indirect
+	github.com/fale/sit v0.0.0-20210120172342-025ffdac3d0c // indirect
 	github.com/fogleman/gg v1.3.0 // indirect
 	github.com/go-fonts/liberation v0.2.0 // indirect
 	github.com/go-latex/latex v0.0.0-20210823091927-c0d11ff05a81 // indirect

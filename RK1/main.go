@@ -59,6 +59,7 @@ func (n *NeuralNetwork) CalculateNet(x [3]int) float64 {
 	for i := 0; i < 3; i++ {
 		net += n.Weights[i] * float64(x[i])
 	}
+	fmt.Println(net)
 	return net
 }
 
@@ -66,6 +67,7 @@ func (n *NeuralNetwork) WeightsCorrection(sigma, dfdnet float64, x [3]int) {
 	for i := 0; i < 3; i++ {
 		n.Weights[i] += n.nu * sigma * dfdnet * float64(x[i])
 	}
+	fmt.Println(n.Weights)
 }
 
 func (n *NeuralNetwork) Study(variablesVector []int) {
@@ -74,7 +76,7 @@ func (n *NeuralNetwork) Study(variablesVector []int) {
 		strings.Repeat("_", 39), strings.Repeat("_", 5))
 	epoch := 0
 
-	for {
+	for k := 0; k < 3; k++ {
 		err := 0
 		valuesVector := ""
 		var predictedY int
@@ -196,7 +198,7 @@ func Equal(a, b []int) bool {
 func main() {
 	fmt.Println(strings.Repeat("-", 30), "FA 1st type", strings.Repeat("-", 30))
 	{
-		nw := NewNeuralNetwork(1, 0.3, Function)
+		nw := NewNeuralNetwork(1, 1, Function)
 		nw.Study(Set)
 		fmt.Println(nw.Weights, nw.Run())
 
@@ -204,7 +206,7 @@ func main() {
 	fmt.Println("\n\n", strings.Repeat("-", 30), "FA 2nd type", strings.Repeat("-", 30))
 	{
 
-		nw := NewNeuralNetwork(2, 0.3, Function)
+		nw := NewNeuralNetwork(2, 1, Function)
 		nw.Study(Set)
 
 	}
